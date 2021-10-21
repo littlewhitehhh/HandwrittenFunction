@@ -10,6 +10,7 @@
 
 <body>
     <script src="./my-promise.js"></script>
+    <script src="./my-debounce.js"></script>
     <script>
         // var p = new Promise((resolve, reject) => {
         //     var obj = {
@@ -36,6 +37,17 @@
         console.log(p1);
         var p2 = Promise.resolve(p1)
         console.log(p2);
+
+        function f1(a, b, c) {
+
+            return function(...args) {
+                    console.log('111');
+                    console.log([...args]);
+                }
+                // return a + b + c
+        }
+        f1(1, 2, 3)(5, 6, 7)
+            // console.log(f1(1, 2, 3))
     </script>
 </body>
 
