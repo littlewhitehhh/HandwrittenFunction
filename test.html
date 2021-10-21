@@ -11,27 +11,31 @@
 <body>
     <script src="./my-promise.js"></script>
     <script>
-        var p = new Promise((resolve, reject) => {
+        // var p = new Promise((resolve, reject) => {
+        //     var obj = {
+        //         name: 'coderwhy',
+        //         age: '18'
+        //     }
+        //     var obj = function() {
+        //             console.log('111');
+        //         }
+        //         // var obj = 10  
+        //     resolve(obj)
+
+        // })
+        // console.log(p);
+        var p1 = new Promise((resolve, reject) => {
             var obj = {
                 name: 'coderwhy',
                 age: '18'
             }
-            var obj = function() {
-                    console.log('111');
-                }
-                // var obj = 10  
-            resolve(obj)
-
-
-
-        })
-        console.log(p);
-        var p1 = new MyPromise((resolve, reject) => {
-            resolve('1')
-        }).then(res => {
+            resolve(obj);
+        }).then((res) => {
             console.log(res);
-        })
+        });
         console.log(p1);
+        var p2 = Promise.resolve(p1)
+        console.log(p2);
     </script>
 </body>
 

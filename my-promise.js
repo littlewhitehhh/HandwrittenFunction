@@ -15,10 +15,12 @@ class MyPromise {
         //构造实例的时候传过来的就是个fn携带了resolve和reject 两个参数   参数都是函数类型的      作用是将pending变为fulfilled或者rejected
     }
 
-    //then方法   
-    // then方法返回一个新的Promise实例  不是原来的 
-    then(onFulfilled, onRejected) { //onfulfilled和onrejected 还是函数类型的参数   表示成功后或失败后执行的回调
-        return new MyPromise((resolve, reject) => { //fn = (resolve,reject)=>{ this._handle({})}
+    //then方法
+    // then方法返回一个新的Promise实例  不是原来的
+    then(onFulfilled, onRejected) {
+        //onfulfilled和onrejected 还是函数类型的参数   表示成功后或失败后执行的回调
+        return new MyPromise((resolve, reject) => {
+            //fn = (resolve,reject)=>{ this._handle({})}
             this._handle({
                 onFulfilled: onFulfilled || null,
                 onRejected: onRejected || null,
@@ -29,7 +31,8 @@ class MyPromise {
     }
 
     // 处理方法
-    _handle(callback) { //callback 是个对象  状态 方法
+    _handle(callback) {
+        //callback 是个对象  状态 方法
         //状态是pending时  执行下面操作
         if (this.state === "pending") {
             this.callbacks.push(callback);
@@ -75,8 +78,83 @@ class MyPromise {
     }
 }
 
-var p1 = new MyPromise((resolve, reject) => {
-    resolve('1')
-}).then(res => {
-    console.log(res);
-})
+// var p1 = new MyPromise((resolve, reject) => {
+//     resolve('1')
+// }).then(res => {
+//     console.log(res);
+// })
+
+// promise.resolve()
+//可以将任何值转为value状态时fulfilled的promise
+MyPromise.resolve = function(value) {
+    if (value && value instanceof MyPromise) {
+        return MyPromise;
+    } else if (
+        value &&
+        typeof value === "object" &&
+        typeof value.then === "function"
+    ) {
+        let then = value.then;
+        return new MyPromise((resolve) => {
+            then(resolve);
+        });
+    } else if (value) {
+        return new MyPromise((resolve) => {
+            resolve(value);
+        });
+    } else {
+        return new MyPromise((resolve) => {
+            resolve();
+        });
+    }
+};
+
+//promise.reject
+MyPromise.reject = function(reason) {
+    return new MyPromise((resolve, reject) => {
+        reject(reason);
+    });
+};
+
+//promise.all
+//传入所有的promise都是fulfilled，则反水他们的值所组成的，状态为fulfilled的PROMISE
+//只要有一个为rejected  则返回rejected的promise ，且他的值是第一个rejected的promise值
+//只要有一个promise是pengding状态，则返回一个pending状态的promise
+MyPromise.all = function(promiseArr) {
+    let index = 0,
+        result = [];
+
+    return new MyPromise((resolve, reject) => {
+        promiseArr.forEach((item, index) => {
+            MyPromise.resolve(item).then(
+                (val) => {
+                    index++;
+                    result[i] = val;
+                    if (index === promiseArr.length) {
+                        resolve(result);
+                    }
+                },
+                (err) => {
+                    reject(err);
+                }
+            );
+        });
+    });
+};
+
+//promise.race
+//返回一个由所有可迭代实例中第一个fulfilled或者rejected的实例包装后的promise实例
+MyPromise.race = function(promiseArr) {
+    return new MyPromise((resolve, reject) => {
+        promiseArr.forEach((item) => {
+            MyPromise.resolve(item).then(
+                (val) => {
+                    resolve(val);
+                },
+                (err) => {
+                    reject(err);
+                }
+            );
+        });
+    });
+};
